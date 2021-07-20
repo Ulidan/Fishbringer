@@ -18,6 +18,7 @@ fb:RegisterEvent"ADDON_LOADED"
 fb:RegisterEvent"COMBAT_LOG_EVENT"
 fb:RegisterEvent"SKILL_LINES_CHANGED"
 fb:RegisterEvent"LOOT_READY"
+fb:RegisterEvent"LOOT_CLOSED"
 fb:RegisterEvent"ZONE_CHANGED_NEW_AREA"
 fb:RegisterEvent"ZONE_CHANGED"
 fb:RegisterEvent"UNIT_INVENTORY_CHANGED"
@@ -152,8 +153,15 @@ local function UpdateFishCount(shouldIncrement)
 	)
 end
 
+local finishedLooting = true
+local function LootClosed()
+	finishedLooting = true
+end
 local function IncrementFishCount()
-	UpdateFishCount(true)
+	if finishedLooting then
+		finishedLooting = false
+		UpdateFishCount(true)
+	end
 end
 
 local function ResetFishCounter(numFish)
@@ -526,6 +534,7 @@ end
 fb.COMBAT_LOG_EVENT = UpdateFishingSkill
 fb.SKILL_LINES_CHANGED = UpdateFishingSkill
 fb.LOOT_READY = IncrementFishCount
+fb.LOOT_CLOSED = LootClosed
 fb.ZONE_CHANGED_NEW_AREA = UpdateCatchInfo
 fb.ZONE_CHANGED = UpdateCatchInfo
 fb.UNIT_INVENTORY_CHANGED = CheckForFishingPole
