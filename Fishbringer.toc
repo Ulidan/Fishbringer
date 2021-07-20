@@ -7,3 +7,5 @@
 
 # main:
 localization.core.lua
+
+# This file is here for compatibility with CurseForge only. it has no function whatsoever
