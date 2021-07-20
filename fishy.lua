@@ -157,6 +157,7 @@ local finishedLooting = true
 local function LootClosed()
 	finishedLooting = true
 end
+
 local function IncrementFishCount()
 	if finishedLooting then
 		finishedLooting = false
