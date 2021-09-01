@@ -9,7 +9,7 @@ local version = GetAddOnMetadata(ADDON_NAME, "Version")
 local addoninfo = 'v'..version
 local _,_,_,interface = GetBuildInfo()
 local classicEra = (interface==11307)
-local classicTBC = (interface==20501)
+local classicTBC = (interface==20502)
 local areaTable = {}
 
 
