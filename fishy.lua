@@ -1,4 +1,3 @@
-FishbringerDB = {}
 local FONT = select(1, GameFontNormalSmall:GetFont())
 local fb = CreateFrame"Frame"
 local db
@@ -8,8 +7,9 @@ local L = namespace.L 				--localization
 local version = GetAddOnMetadata(ADDON_NAME, "Version")
 local addoninfo = 'v'..version
 local _,_,_,interface = GetBuildInfo()
-local classicEra = (interface==11307)
-local classicTBC = (interface==20502)
+local classicEra = (interface>10000 and interface<12000)
+local classicTBC = (interface>20000 and interface<30000)
+local classicWrath = (interface>30000 and interface<40000)
 local areaTable = {}
 
 
@@ -28,6 +28,17 @@ local function Print(text)
 end
 
 local zones = {
+	[114] = 380,
+	[115] = 380,
+	[116] = 380,
+	[117] = 380,
+	[118] = 480,
+	[119] = 430,
+	[123] = 430,
+	[125] = 430,
+	[126] = 430,
+	[127] = 405,
+	[170] = 480,
 	[1411] = -70,
 	[1412] = -70,
 	[1413] = -20,
@@ -104,6 +115,7 @@ local subzones = {
 	[3690] = 405,
 	[3691] = 405,
 	[3692] = 405,
+	[3979] = 480,
 	[3859] = 405,
 	[3974] = 405,
 	[3975] = 405,
@@ -117,7 +129,7 @@ local instances = {
 	[309] = 309,
 	[329] = 330,
 	[349] = 205,
-	[548] = 405,
+	[548] = 130,
 	[1001] = 130,
 	[1004] = 130,
 	[1007] = 330,
@@ -132,14 +144,20 @@ local fishingpoles = {
 	[19970] = true,
 	[25978] = true,
 	[44050] = true,
+	[45991] = true,
+	[45992] = true,
 }
 
 local function GetNumFishToLevel(skillRank)
-	if skillRank <= 75 then
-		return 1
-	else
-		return math.ceil((skillRank - 75) / 25)
-	end
+	local expScale
+	local numFishToLevel
+	if classicEra or skillRank>=300 then expScale=25
+	elseif classicTBC or classicWrath then expScale=31.25
+	else expScale=1 end
+	numFishToLevel=math.ceil(skillRank / expScale)-3
+	if numFishToLevel < 1 then numFishToLevel=1 end
+
+	return numFishToLevel
 end	
 
 local function UpdateFishCount(shouldIncrement)
@@ -213,12 +231,11 @@ local function UpdateCatchInfo()
 			zoneSkill = subzones[areaId]
 		end
 		if not zoneSkill then
-			zoneText = GetRealZoneText()
 			local mapId = C_Map.GetBestMapForUnit("Player")
+			zoneText = C_Map.GetMapInfo(mapId).name
 			zoneSkill = zones[mapId]
 		end
 	end
-
 	-- Sometimes we can trigger this before the player is in any zone
 	if not zoneText then
 		return
@@ -232,7 +249,7 @@ local function UpdateCatchInfo()
 		maxZoneSkill = zoneSkill + 95
 	end
 
-	local chance = (
+	FishbringerDB.chance = (
 			db[char].fishingSkill + db[char].fishingBuff - zoneSkill
 	) * 0.01 + 0.05
 	
@@ -240,18 +257,18 @@ local function UpdateCatchInfo()
 		zoneSkill = 1
 	end
 	
-	if chance > 1 then 
-		chance = 1
-	elseif chance < 0 then 
-		chance = 0
+	if FishbringerDB.chance > 1 then 
+		FishbringerDB.chance = 1
+	elseif FishbringerDB.chance < 0 then 
+		FishbringerDB.chance = 0
 	end
 
 	local color
-	if chance == 0 then
+	if FishbringerDB.chance == 0 then
 		color = "ffff2020"
-	elseif chance <= 0.5 then 
+	elseif FishbringerDB.chance <= 0.5 then 
 		color = "ffff8040"
-	elseif chance < 1 then 
+	elseif FishbringerDB.chance < 1 then 
 		color = "ffffff00"
 	else
 		color = "ff40bf40"
@@ -259,15 +276,15 @@ local function UpdateCatchInfo()
 	if zoneSkill == 0 then
 		Fishbringer.zoneInfo:SetFormattedText(
 			L["\124c%s%s\124r\nNo fish in this zone"],
-			color, zoneText, zoneSkill, maxZoneSkill, chance * 100
+			color, zoneText, zoneSkill, maxZoneSkill, FishbringerDB.chance * 100
 		)
 		Fishbringer.catchRate:SetText("")
 	else
 		Fishbringer.zoneInfo:SetFormattedText(
 			L["\124c%s%s\124r\n%d skill needed to fish\n(%d needed for 100%% catch rate)"],
-			color, zoneText, zoneSkill, maxZoneSkill, chance * 100
+			color, zoneText, zoneSkill, maxZoneSkill, FishbringerDB.chance * 100
 		)
-		Fishbringer.catchRate:SetFormattedText(L["%d%% catch rate"], chance * 100)
+		Fishbringer.catchRate:SetFormattedText(L["%d%% catch rate"], FishbringerDB.chance * 100)
 	end
 end
 
@@ -414,13 +431,17 @@ local function InitializeFrame()
 	if Fishbringer then
 		return
 	end
+--[[ Classic Era Frame Is now the same as TBC
 	if classicEra then
 		local Fishbringer = classicEraCreateFrame()
 	elseif classicTBC then
+--]]
 		local Fishbringer = classicTBCCreateFrame()
+--[[
 	else
 		return
 	end
+--]]
 	Fishbringer:EnableMouse(true)
 	Fishbringer:SetMovable(true)
 	Fishbringer:SetUserPlaced(true)
@@ -511,7 +532,7 @@ local function InitializeFrame()
 	end
 end
 
-function UpdateFishingSkill()
+local function UpdateFishingSkill()
 	return UpdateSkill(false)
 end
 
