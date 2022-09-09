@@ -144,18 +144,19 @@ local fishingpoles = {
 	[19970] = true,
 	[25978] = true,
 	[44050] = true,
+	[45120] = true,
+	[45858] = true,
 	[45991] = true,
 	[45992] = true,
 }
 
 local function GetNumFishToLevel(skillRank)
-	local expScale
+	local expScale=25
 	local numFishToLevel
-	if classicEra or skillRank>=300 then expScale=25
-	elseif classicTBC or classicWrath then expScale=31.25
-	else expScale=1 end
-	numFishToLevel=math.ceil(skillRank / expScale)-3
-	if numFishToLevel < 1 then numFishToLevel=1 end
+	numFishToLevel=math.ceil(skillRank / expScale)-2
+	if numFishToLevel < 1 then
+		numFishToLevel=1
+	end
 
 	return numFishToLevel
 end	
@@ -314,9 +315,15 @@ local function UpdateSkill(forceResetFishCounter)
 	local skillRankText = skillRank
 
 	local fishNeeded = GetNumFishToLevel(skillRank)
-	if skillRank ~= skillMaxRank then 
+	local strFishNeeded
+	if skillRank ~= skillMaxRank then
 		skillRankText = string.format("%d(%d)", skillRank, skillMaxRank)
-		fishNeededText = string.format(L["\n%d fish needed to skill up"], fishNeeded)
+		if fishNeeded>1 then
+			strFishNeeded = string.format("%d-%d",fishNeeded-1, fishNeeded)
+		else
+			strFishNeeded = string.format("%d", fishNeeded)
+		end
+		fishNeededText = string.format(L["\n%s fish needed to skill up"], strFishNeeded)
 	end
 
 	local skillModifierText = ""
@@ -419,29 +426,14 @@ local function InitializeDB(resetDatabase)
 	end
 end
 
-local function classicEraCreateFrame()
-	return CreateFrame("Frame", "Fishbringer", UIParent)
-end
-local function classicTBCCreateFrame()
-	return CreateFrame("Frame", "Fishbringer", UIParent, "BackdropTemplate")
-end
-
 local function InitializeFrame()
 	-- Frame madness
 	if Fishbringer then
 		return
 	end
---[[ Classic Era Frame Is now the same as TBC
-	if classicEra then
-		local Fishbringer = classicEraCreateFrame()
-	elseif classicTBC then
---]]
-		local Fishbringer = classicTBCCreateFrame()
---[[
-	else
-		return
-	end
---]]
+
+	local Fishbringer = CreateFrame("Frame", "Fishbringer", UIParent, "BackdropTemplate")
+
 	Fishbringer:EnableMouse(true)
 	Fishbringer:SetMovable(true)
 	Fishbringer:SetUserPlaced(true)
