@@ -10,6 +10,7 @@ local _,_,_,interface = GetBuildInfo()
 local classicEra = (interface>10000 and interface<12000)
 local classicTBC = (interface>20000 and interface<30000)
 local classicWrath = (interface>30000 and interface<40000)
+local classicCata = (interface>40000 and interface<50000)
 local areaTable = {}
 
 
@@ -39,6 +40,12 @@ local zones = {
 	[126] = 430,
 	[127] = 405,
 	[170] = 480,
+	[198] = 555, -- Mount Hyjal
+	[204] = 555, -- Abyssal Depths
+	[205] = 555, -- Shimmering Expanse
+	[207] = 555, -- Deepholm
+	[241] = 555, -- Twilight Highlands
+	[249] = 555, -- Uldum
 	[1411] = -70,
 	[1412] = -70,
 	[1413] = -20,
@@ -151,11 +158,16 @@ local fishingpoles = {
 }
 
 local function GetNumFishToLevel(skillRank)
-	local expScale=25
+	local classicScale=25
+	local expScale=75
 	local numFishToLevel
-	numFishToLevel=math.ceil(skillRank / expScale)-2
-	if numFishToLevel < 1 then
-		numFishToLevel=1
+	if skillRank <= 300 then
+		numFishToLevel=math.ceil(skillRank / classicScale)-2
+		if numFishToLevel < 1 then
+			numFishToLevel = 1
+		end
+	else
+		numFishToLevel=math.ceil((skillRank-315)/expScale)+10
 	end
 
 	return numFishToLevel
@@ -233,8 +245,10 @@ local function UpdateCatchInfo()
 		end
 		if not zoneSkill then
 			local mapId = C_Map.GetBestMapForUnit("Player")
-			zoneText = C_Map.GetMapInfo(mapId).name
-			zoneSkill = zones[mapId]
+			if mapId then
+				zoneText = C_Map.GetMapInfo(mapId).name
+				zoneSkill = zones[mapId]
+			end
 		end
 	end
 	-- Sometimes we can trigger this before the player is in any zone
@@ -250,14 +264,15 @@ local function UpdateCatchInfo()
 		maxZoneSkill = zoneSkill + 95
 	end
 
-	FishbringerDB.chance = (
-			db[char].fishingSkill + db[char].fishingBuff - zoneSkill
-	) * 0.01 + 0.05
+	FishbringerDB.chance = (classicCata or classicWrath) and
+		((db[char].fishingSkill + db[char].fishingBuff) / maxZoneSkill)^2 or
+		(db[char].fishingSkill + db[char].fishingBuff - zoneSkill) * 0.01 + 0.05
+	FishbringerDB.chance = FishbringerDB.chance > 1 and 1 or FishbringerDB.chance
 	
 	if zoneSkill < 0 then 
 		zoneSkill = 1
 	end
-	
+
 	if FishbringerDB.chance > 1 then 
 		FishbringerDB.chance = 1
 	elseif FishbringerDB.chance < 0 then 
@@ -276,16 +291,17 @@ local function UpdateCatchInfo()
 	end
 	if zoneSkill == 0 then
 		Fishbringer.zoneInfo:SetFormattedText(
-			L["\124c%s%s\124r\nNo fish in this zone"],
-			color, zoneText, zoneSkill, maxZoneSkill, FishbringerDB.chance * 100
+			"|c%s%s|r\n" .. L["No fish in this zone"],
+			color, zoneText
 		)
 		Fishbringer.catchRate:SetText("")
 	else
+		local areaSkillText = classicWrath and "" or format(L["%d skill needed to fish"] .. "\n", zoneSkill)
 		Fishbringer.zoneInfo:SetFormattedText(
-			L["\124c%s%s\124r\n%d skill needed to fish\n(%d needed for 100%% catch rate)"],
-			color, zoneText, zoneSkill, maxZoneSkill, FishbringerDB.chance * 100
+			"|c%s%s|r\n" .. areaSkillText .. L["%d skill needed for 100%% catch rate"],
+			color, zoneText, maxZoneSkill
 		)
-		Fishbringer.catchRate:SetFormattedText(L["%d%% catch rate"], FishbringerDB.chance * 100)
+		Fishbringer.catchRate:SetFormattedText(L["%d%% catch rate"] .. " (" .. L["%d%% junk rate"] .. ")", FishbringerDB.chance * 100, (1-FishbringerDB.chance) * 100)
 	end
 end
 
@@ -319,7 +335,11 @@ local function UpdateSkill(forceResetFishCounter)
 	if skillRank ~= skillMaxRank then
 		skillRankText = string.format("%d(%d)", skillRank, skillMaxRank)
 		if fishNeeded>1 then
-			strFishNeeded = string.format("%d-%d",fishNeeded-1, fishNeeded)
+			if fishNeeded<10 then
+				strFishNeeded = string.format("%d-%d",fishNeeded-1, fishNeeded)
+			else
+				strFishNeeded = string.format("%d-%d",fishNeeded-1, fishNeeded+1)
+			end
 		else
 			strFishNeeded = string.format("%d", fishNeeded)
 		end
@@ -421,9 +441,30 @@ local function InitializeDB(resetDatabase)
 			maxFishingSkill = 0,
 			isShown = false,
 			isFishCountShown = true,
-			alignment = "RIGHT"
+			alignment = "RIGHT",
+			isGradiant = true,
 		}
 	end
+end
+
+local function setTitleText()
+
+	local name
+	if db[char].isGradiant == nil then
+		db[char].isGradiant = true
+	end
+	if db[char].isGradiant then
+		name = "|cff0000ffF|cff0049ffi|cff0069ffs|cff0083ffh|cff0099ffb|cff00acffr|cff00bfffi|cff00d0ffn|cff00e1ffg|cff00f0ffe|cff00ffffr"
+	else
+		name = "Fishbringer"
+	end
+	Fishbringer.title:SetText(name)
+
+end
+
+local function toggleColor()
+	db[char].isGradiant=not db[char].isGradiant
+	setTitleText()
 end
 
 local function InitializeFrame()
@@ -474,14 +515,9 @@ local function InitializeFrame()
 	title:SetJustifyH(db[char].alignment)
 	title:SetFont(FONT, 16)
 	title:SetShadowOffset(1, -1)
-	local name
-	if random(100) < 5 then 
-		name = "Corrupted Fishbringer"
-	else
-		name = "Fishbringer"
-	end
-	title:SetText(name)
+
 	Fishbringer.title = title
+	setTitleText()
 
 	local zoneInfo = Fishbringer:CreateFontString(nil, "OVERLAY")
 	zoneInfo:SetHeight(50)
@@ -559,6 +595,7 @@ local function ShowHelp()
 	Print(L["- /fishbringer align - Cycles through text alignment."])
 	Print(L["- /fishbringer count - Toggles fish count visibility."])
 	Print(L["- /fishbringer reset - Resets the fish database."])
+	Print(L["- /fishbringer color - Enables/disables gradient color."])
 end
 
 SlashCmdList["FISHBRINGER"] = function(arg)
@@ -572,6 +609,9 @@ SlashCmdList["FISHBRINGER"] = function(arg)
 		InitializeDB(true)
 		UpdateSkill(true)
 		UpdateCatchInfo()
+		return
+	elseif arg == "color" then
+		toggleColor()
 		return
 	end
 	return ShowHelp()

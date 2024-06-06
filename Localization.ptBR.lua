@@ -11,9 +11,11 @@ if namespace.locale == "ptBR" then
     L["- /fishbringer reset - Resets the fish database."] = "- /fishbringer reset - Reinicia o banco de dados de peixes."
 
     --Fishbringer Overlay/Display Widget
-	L["\124c%s%s\124r\nNo fish in this zone"] = "\124c%s%s\124r\nNenhum peixe nesta zona"
-    L["\124c%s%s\124r\n%d skill needed to fish\n(%d needed for 100%% catch rate)"] = "\124c%s%s\124r\n%d habilidade necessária para pescar\n(%d necessário para 100%% de taxa de captura)"
+	L["No fish in this zone"] = "Nenhum peixe nesta zona"
+    L["%d skill needed to fish:"] = "%d habilidade necessária para pescar"
+	L["%d needed for 100%% catch rate"] = "%d necessário para 100%% de taxa de captura"
     L["%d%% catch rate"] = "%d%% taxa de captura"
+--	L["%d%% junk rate"] = "%d%% junk rate"
     L["%s%s fishing skill%s"] = "%s%s habilidade de pesca"
     L["\n%d fish needed to skill up"] = "\n%d peixes precisavam de habilidade"
     L["%d fish caught at this level"] = "%d peixes capturados neste nível"
