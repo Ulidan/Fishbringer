@@ -301,7 +301,8 @@ local function UpdateCatchInfo()
 			"|c%s%s|r\n" .. areaSkillText .. L["%d skill needed for 100%% catch rate"],
 			color, zoneText, maxZoneSkill
 		)
-		Fishbringer.catchRate:SetFormattedText(L["%d%% catch rate"] .. " (" .. L["%d%% junk rate"] .. ")", FishbringerDB.chance * 100, (1-FishbringerDB.chance) * 100)
+		local chance = floor(FishbringerDB.chance * 100)
+		Fishbringer.catchRate:SetFormattedText(L["%d%% catch rate"] .. " (" .. L["%d%% junk rate"] .. ")", chance, 100 - chance)
 	end
 end
 
