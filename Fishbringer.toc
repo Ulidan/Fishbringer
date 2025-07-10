@@ -1,4 +1,4 @@
-## Interface: 40400
+## Interface: 50500
 ## Title: Fishbringer
 ## Title-deDE: Fishbringer
 ## Title-ruRU: Fishbringer
@@ -10,7 +10,7 @@
 ## Notes-ptBR: O lendário Fishbringer, Guia do Highlord Escarlate! Nat Pagle ficaria orgulhoso de você!
 ## Author: Kalerath, Fye (Localization Code & Bugfixes), Zilom (Bugfixes & Localization Redesigned + Added), leafoe (Russian Localization)
 ## SavedVariables: FishbringerDB
-## Version: 3.1.2
+## Version: 3.1.4
 
 # localizations:
 localization.core.lua

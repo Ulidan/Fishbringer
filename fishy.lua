@@ -4,13 +4,15 @@ local db
 local char = string.format("%s - %s", UnitName"player", GetRealmName())
 local ADDON_NAME, namespace = ... 	--localization
 local L = namespace.L 				--localization
-local version = GetAddOnMetadata(ADDON_NAME, "Version")
+local version = C_AddOns.GetAddOnMetadata(ADDON_NAME, "Version")
 local addoninfo = 'v'..version
 local _,_,_,interface = GetBuildInfo()
-local classicEra = (interface>10000 and interface<12000)
-local classicTBC = (interface>20000 and interface<30000)
-local classicWrath = (interface>30000 and interface<40000)
-local classicCata = (interface>40000 and interface<50000)
+local classicEra = (interface>=10000 and interface<12000)
+local classicTBC = (interface>=20000 and interface<30000)
+local classicWrath = (interface>=30000 and interface<40000)
+local classicCata = (interface>=40000 and interface<50000)
+local classicMoP = (interface>=50000 and interface<60000)
+local junkCatching = (interface>=30000 and interface<60000) -- Wrath -> MoP
 local areaTable = {}
 
 
@@ -46,6 +48,18 @@ local zones = {
 	[207] = 555, -- Deepholm
 	[241] = 555, -- Twilight Highlands
 	[249] = 555, -- Uldum
+	[371] = 630, -- The Jade Forest
+	[376] = 630, -- Valley of the Four Winds
+	[378] = 630, -- The wandering Isle
+	[379] = 630, -- Kun Lai Summit
+	[388] = 630, -- Townlong Steppes
+	[390] = 630, -- Vale of Eternal Blossoms
+	[418] = 630, -- Karasang Wilds
+	[422] = 630, -- Dread Wastes
+	[433] = 630, -- The Veiled Stair
+	[504] = 630, -- Isle of Thunder
+	[507] = 630, -- Isle of Giants
+	[554] = 630, -- Timeless Isle
 	[1411] = -70,
 	[1412] = -70,
 	[1413] = -20,
@@ -264,7 +278,7 @@ local function UpdateCatchInfo()
 		maxZoneSkill = zoneSkill + 95
 	end
 
-	FishbringerDB.chance = (classicCata or classicWrath) and
+	FishbringerDB.chance = junkCatching and
 		((db[char].fishingSkill + db[char].fishingBuff) / maxZoneSkill)^2 or
 		(db[char].fishingSkill + db[char].fishingBuff - zoneSkill) * 0.01 + 0.05
 	FishbringerDB.chance = FishbringerDB.chance > 1 and 1 or FishbringerDB.chance
@@ -296,7 +310,7 @@ local function UpdateCatchInfo()
 		)
 		Fishbringer.catchRate:SetText("")
 	else
-		local areaSkillText = classicWrath and "" or format(L["%d skill needed to fish"] .. "\n", zoneSkill)
+		local areaSkillText = junkCatching and "" or format(L["%d skill needed to fish"] .. "\n", zoneSkill)
 		Fishbringer.zoneInfo:SetFormattedText(
 			"|c%s%s|r\n" .. areaSkillText .. L["%d skill needed for 100%% catch rate"],
 			color, zoneText, maxZoneSkill
@@ -620,7 +634,7 @@ end
 
 SLASH_FISHBRINGER1 = "/fishbringer"
 -- Hail to Fishing Buddy!
-if not select(4, GetAddOnInfo"FishingBuddy") then
+if not select(4, C_AddOns.GetAddOnInfo"FishingBuddy") then
 	SLASH_FISHBRINGER2 = "/fb"
 end
 
