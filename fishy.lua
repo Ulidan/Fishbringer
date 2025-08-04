@@ -169,6 +169,10 @@ local fishingpoles = {
 	[45858] = true,
 	[45991] = true,
 	[45992] = true,
+	[46337] = true,
+	[52678] = true,
+	[84660] = true,
+	[84661] = true,
 }
 
 local function GetNumFishToLevel(skillRank)
