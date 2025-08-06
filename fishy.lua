@@ -362,7 +362,7 @@ local function UpdateSkill(forceResetFishCounter)
 		else
 			strFishNeeded = string.format("%d", fishNeeded)
 		end
-		fishNeededText = string.format(L["\n%s fish needed to skill up"], strFishNeeded)
+		fishNeededText = classicMoP and "" or string.format(L["\n%s fish needed to skill up"], strFishNeeded)
 	end
 
 	local skillModifierText = ""
@@ -433,8 +433,8 @@ local function ToggleFishCount()
 end
 
 local function CheckForFishingPole() 
-	local _, _, itemid = string.find(GetInventoryItemLink("player", GetInventorySlotInfo("MainHandSlot")) or "", "item:(%d+):(.+)")
-	if fishingpoles[tonumber(itemid)] then
+	local itemid = GetInventoryItemID("player",INVSLOT_MAINHAND)
+	if itemid and fishingpoles[itemid] then
 		Update()
 		Fishbringer:Show()
 		db[char].isShown = true
