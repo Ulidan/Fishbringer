@@ -31,6 +31,52 @@ local function Print(text)
 end
 
 local zones = {
+--Cata renewed zones
+	[1] = -70, --Durotar
+	[7] = -70, --Mulgore
+	[10] = -20, --The Barrens
+	[14] = 130, --Arathi Highlands
+	[18] = -70, --Tirisfal Glades
+	[21] = -20, --Silverpine Forest
+	[22] = 205, --Western Plaguelands
+	[23] = 330, --Eastern Plaguelands
+	[25] = 55, --Hillsbrad Foothills
+	[26] = 205, --The Hinterlands
+	[27] = -70, --Dun Morogh
+	[36] = 330, --Burning Steppes
+	[37] = -70, --Elwynn Forest
+	[42] = 330, --Deadwind Pass
+	[47] = 55, --Duskwood
+	[48] = -20, --Loch Modan
+	[49] = 55, --Redridge Mountains
+	[51] = 130, --Swamp of Sorrows
+	[52] = -20, --Westfall
+	[56] = 55, --Wetlands
+	[57] = -70, --Teldrassil
+	[62] = -20, --Darkshore
+	[63] = 55, --Ashenvale
+	[64] = 130, --Thousand Needles
+	[65] = 55, --Stonetalon Mountains
+	[66] = 130, --Desolace
+	[69] = 205, --Feralas
+	[70] = 130, --Dustwallow Marsh
+	[71] = 205, --Tanaris
+	[76] = 205, --Azshara
+	[77] = 205, --Felwood
+	[78] = 205, --Un'Goro Crater
+	[80] = 205, --Moonglade
+	[81] = 330, --Silithus
+	[83] = 330, --Winterspring
+	[84] = -20, --Stormwind City
+	[85] = -20, --Orgrimmar
+	[87] = -20, --Ironforge
+	[88] = -20, --Thunder Bluff
+	[89] = -20, --Darnassus
+--	[224] = 130 --Stranglethorn Vale
+	[50] = 130, --Northern Stranglethorn
+	[210] = 130, --The cape of Stranglethorn
+	[998] = -20, --Undercity
+--end of cata renewed zones
 	[114] = 380,
 	[115] = 380,
 	[116] = 380,
