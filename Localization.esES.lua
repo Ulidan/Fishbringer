@@ -13,7 +13,7 @@ if namespace.locale == "esES" then
 	--Fishbringer Overlay/Display Widget
 	L["No fish in this zone"] = "No hay peces en esta zona"
 	L["%d skill needed to fish:"] = "%d habilidad necesaria para pescar"
-	L["%d needed for 100%% catch rate"] = "%d necesario para una tasa de captura del 100%%"
+	L["%d skill needed for 100%% catch rate"] = "%d necesario para una tasa de captura del 100%%"
 	L["%d%% catch rate"] = "%d%% tasa de captura"
 --	L["%d%% junk rate"] = "%d%% junk rate"
 	L["%s%s fishing skill%s"] = "%s%s habilidad de pesca"

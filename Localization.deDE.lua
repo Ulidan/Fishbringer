@@ -13,7 +13,7 @@ if namespace.locale == "deDE" then
 	--Anzeige auf Bildschirm
 	L["No fish in this zone"] = "Kein fisch in dieser zone"
 	L["%d skill needed to fish:"] = "%d Angelskill benötigt zum Angeln"
-	L["%d needed for 100%% catch rate"] = "%d benötigt für 100%% Fangchance"
+	L["%d skill needed for 100%% catch rate"] = "%d benötigt für 100%% Fangchance"
 	L["%d%% catch rate"] = "%d%% Fangchance"
 --	L["%d%% junk rate"] = "%d%% junk rate"
 	L["%s%s fishing skill%s"] = "%s%s Angelskill%s"

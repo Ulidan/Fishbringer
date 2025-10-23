@@ -13,7 +13,7 @@ if namespace.locale == "ruRU" then
     --Fishbringer Overlay/Display Widget
 	L["No fish in this zone"] = "В этой зоне нет рыбы"
     L["%d skill needed to fish:"] = "%d навыка требуется для рыбалки"
-	L["%d needed for 100%% catch rate"] = "%d требуется для 100%% успеха"
+	L["%d skill needed for 100%% catch rate"] = "для 100%% успеха требуется навык %d"
     L["%d%% catch rate"] = "%d%% шанс поймать"
 --	L["%d%% junk rate"] = "%d%% junk rate"
     L["%s%s fishing skill%s"] = "%s%s навык рыбной ловли"
